@@ -1,0 +1,269 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>testBjork</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-10"><meta name="DC.source" content="testBjork.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">M1 = NaN(26,3);
+M2 = NaN(26,4);
+M3 = NaN(26,4);
+<span class="keyword">for</span> i=5:30
+    f=-1+(1+1)*rand(i,1);
+    x = linspace(-1,1,i);
+    x=x';
+    [Lx,Lf]=leja(x,f); <span class="comment">%gets values for Leja</span>
+    V=fliplr(vander(x));
+    aBPd=bjorck(x,f);
+    aGE=dd(i,x,f);
+    aBPs=bjorckSingle(x,f); <span class="comment">%single persision bjorck</span>
+    aBPLd=bjorck(Lx,Lf);  <span class="comment">%bjorck with leja ordering double</span>
+    aBPLs=bjorckSingle(Lx,Lf); <span class="comment">%leja single</span>
+
+    <span class="comment">%                    Table 1</span>
+    <span class="comment">%To see error for just forward and backward</span>
+    ferror=norm(aBPd-aBPs)/norm(aBPd);
+    berror=norm(f-V*aBPd)/(norm(V)*norm(aBPd));
+
+    <span class="comment">%                    Table 2</span>
+    <span class="comment">%Below is three forward error for Guassian elimination,</span>
+    <span class="comment">%Bjorck-Pereyra without Leja order and with it, labled</span>
+    <span class="comment">%e1,e2,e3 respectively</span>
+    e1=norm(aBPLd-aGE)/norm(aBPLd);
+    e2=norm(aBPLd-aBPs)/norm(aBPLd);
+    e3=norm(aBPLd-aBPLs)/norm(aBPLd);
+
+    <span class="comment">%                    Table 3</span>
+    b_e1=norm(f-V*aGE)/(norm(V)*norm(aGE));
+    b_e2=norm(f-V*aBPs)/(norm(V)*norm(aBPs));
+    b_e3=norm(f-V*aBPLs)/(norm(V)*norm(aBPLs));
+
+
+    <span class="comment">%Construct array of values to make table</span>
+    temp1 =[i ferror berror];
+    temp2 =[i e1 e2 e3];
+    temp3 =[i b_e1 b_e2 b_e3];
+    M1(i-4,:)=temp1;
+    M2(i-4,:)=temp2;
+    M3(i-4,:)=temp3;
+
+<span class="keyword">end</span>
+<span class="comment">%General Forward and Backward error of just BP</span>
+ForVSBackError = array2table(M1,<span class="string">'VariableNames'</span>,{<span class="string">'N'</span>,<span class="string">'FError'</span>,<span class="string">'BError'</span>})
+<span class="comment">%Forward and backward error for GE, BPs and BPLs</span>
+ForwardError = array2table(M2,<span class="string">'VariableNames'</span>,{<span class="string">'N'</span>,<span class="string">'Ge'</span>,<span class="string">'BPs'</span>, <span class="string">'BPLs'</span>})
+BackwardError = array2table(M3,<span class="string">'VariableNames'</span>,{<span class="string">'N'</span>,<span class="string">'B_Ge'</span>,<span class="string">'B_BPs'</span>, <span class="string">'B_BPLs'</span>})
+</pre><pre class="codeoutput">
+ForVSBackError = 
+
+    N       FError        BError  
+    __    __________    __________
+
+     5    1.0909e-07     5.078e-17
+     6    1.9616e-07    5.9134e-17
+     7    1.4059e-06    6.6813e-17
+     8    2.5221e-06    2.6192e-16
+     9    2.7719e-06    2.4012e-16
+    10    3.1505e-06    2.5933e-16
+    11    1.0064e-05    3.2384e-16
+    12    5.4464e-06    1.2738e-16
+    13    0.00011808     1.113e-15
+    14    0.00028669    1.1051e-15
+    15    0.00014673    9.6191e-16
+    16    0.00027741    3.8737e-16
+    17     0.0012353    1.4915e-16
+    18     0.0014085    1.2384e-15
+    19    0.00017953    1.2557e-15
+    20    3.3473e-05    3.6687e-15
+    21      0.012919    2.9882e-16
+    22     0.0071737    2.9401e-15
+    23      0.011626    2.3246e-14
+    24     0.0025389    2.8536e-15
+    25      0.023853    1.5952e-14
+    26      0.069759     1.497e-15
+    27       0.23002    1.8103e-14
+    28        0.2009    3.7508e-16
+    29       0.77831    1.0751e-14
+    30        2.4145     4.295e-14
+
+
+ForwardError = 
+
+    N       Ge         BPs           BPLs   
+    __    ______    __________    __________
+
+     5    1.2379    1.0909e-07    4.7357e-08
+     6    0.9861    1.9616e-07    3.3011e-07
+     7    1.4358    1.4059e-06    6.0529e-08
+     8    1.7524    2.5221e-06    3.4906e-07
+     9    2.5583    2.7719e-06    1.0952e-06
+    10    1.5827    3.1505e-06    1.0764e-06
+    11      1.65    1.0064e-05    1.5322e-07
+    12    1.8051    5.4464e-06    3.6269e-07
+    13    1.5481    0.00011808     2.558e-07
+    14    1.1013    0.00028669    9.9513e-07
+    15    1.0579    0.00014673     4.029e-07
+    16    1.0478    0.00027741    4.1391e-07
+    17    1.1442     0.0012353    2.6478e-07
+    18    1.1075     0.0014085    8.2115e-07
+    19    1.0471    0.00017953    3.6507e-07
+    20    1.0218    3.3473e-05    1.1277e-07
+    21    1.0165      0.012919    1.4789e-07
+    22     1.014     0.0071737    1.0705e-07
+    23    1.0437      0.011626    8.8856e-07
+    24    1.0123     0.0025389    5.0102e-08
+    25    1.0167      0.023853    2.0299e-07
+    26    1.0049      0.069759    1.9782e-07
+    27    1.0126       0.23002    7.0477e-07
+    28    1.0017        0.2009    5.8456e-07
+    29    1.0047       0.77831    1.1802e-06
+    30    1.0019        2.4145    6.9577e-08
+
+
+BackwardError = 
+
+    N       B_Ge        B_BPs         B_BPLs  
+    __    ________    __________    __________
+
+     5     0.57913     4.582e-08    1.8132e-08
+     6     0.52221    3.4021e-08    1.5646e-08
+     7     0.50724    6.3898e-08    3.4658e-08
+     8     0.43305    6.3098e-08    8.1062e-09
+     9     0.52274    8.7966e-08    2.7305e-08
+    10     0.55342     2.367e-08    1.2781e-08
+    11     0.58923    5.4129e-08    2.2374e-08
+    12     0.57673    7.3511e-08    9.1863e-09
+    13      0.6338    1.4684e-07    2.3059e-08
+    14     0.14231    3.0902e-08    5.1466e-09
+    15    0.096789    1.2464e-08    6.4461e-09
+    16     0.28909    1.4284e-08    3.9078e-09
+    17     0.52145     2.892e-08     4.412e-09
+    18     0.54723      5.21e-08    8.4837e-09
+    19     0.45394    2.7292e-08      8.39e-09
+    20     0.34634    5.0033e-09    3.3824e-08
+    21     0.15318    2.4137e-08    8.6731e-09
+    22     0.43016    5.5436e-09    1.8513e-08
+    23     0.53837    5.7948e-08    6.9797e-09
+    24     0.42256    1.7488e-08    1.0896e-08
+    25     0.47326    1.4318e-08    5.5982e-09
+    26     0.36932    1.3309e-08    3.4532e-09
+    27     0.43726    6.3426e-08    8.3504e-09
+    28      0.2444    7.4404e-09    7.6705e-09
+    29     0.21491    4.1024e-08    8.4051e-09
+    30     0.33292    8.7657e-09    3.4209e-09
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+M1 = NaN(26,3);
+M2 = NaN(26,4);
+M3 = NaN(26,4);
+for i=5:30
+    f=-1+(1+1)*rand(i,1);
+    x = linspace(-1,1,i);
+    x=x';
+    [Lx,Lf]=leja(x,f); %gets values for Leja
+    V=fliplr(vander(x)); 
+    aBPd=bjorck(x,f);
+    aGE=dd(i,x,f);
+    aBPs=bjorckSingle(x,f); %single persision bjorck
+    aBPLd=bjorck(Lx,Lf);  %bjorck with leja ordering double
+    aBPLs=bjorckSingle(Lx,Lf); %leja single 
+    
+    %                    Table 1
+    %To see error for just forward and backward
+    ferror=norm(aBPd-aBPs)/norm(aBPd);
+    berror=norm(f-V*aBPd)/(norm(V)*norm(aBPd));
+    
+    %                    Table 2
+    %Below is three forward error for Guassian elimination,
+    %Bjorck-Pereyra without Leja order and with it, labled
+    %e1,e2,e3 respectively
+    e1=norm(aBPLd-aGE)/norm(aBPLd); 
+    e2=norm(aBPLd-aBPs)/norm(aBPLd); 
+    e3=norm(aBPLd-aBPLs)/norm(aBPLd);
+    
+    %                    Table 3
+    b_e1=norm(f-V*aGE)/(norm(V)*norm(aGE));
+    b_e2=norm(f-V*aBPs)/(norm(V)*norm(aBPs));
+    b_e3=norm(f-V*aBPLs)/(norm(V)*norm(aBPLs));
+    
+    
+    %Construct array of values to make table
+    temp1 =[i ferror berror];
+    temp2 =[i e1 e2 e3];
+    temp3 =[i b_e1 b_e2 b_e3];   
+    M1(i-4,:)=temp1;
+    M2(i-4,:)=temp2;
+    M3(i-4,:)=temp3;
+    
+end
+%General Forward and Backward error of just BP
+ForVSBackError = array2table(M1,'VariableNames',{'N','FError','BError'})
+%Forward and backward error for GE, BPs and BPLs
+ForwardError = array2table(M2,'VariableNames',{'N','Ge','BPs', 'BPLs'})
+BackwardError = array2table(M3,'VariableNames',{'N','B_Ge','B_BPs', 'B_BPLs'})
+
+
+##### SOURCE END #####
+--></body></html>
